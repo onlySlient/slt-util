@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "api/pb";
+
+message HelloReq{
+    string req = 1;
+}
+
+message HelloResp{
+    string resp = 2;
+}

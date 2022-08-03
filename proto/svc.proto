@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "api/pb";
+
+import "proto/user.proto";
+
+service SltUtilService {
+    // hello
+    rpc Hello(api.HelloReq) returns (api.HelloResp) {};
+};
