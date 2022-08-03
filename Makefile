@@ -12,3 +12,5 @@ pb:
 		--go-grpc_out=./generate --go-grpc_opt=paths=source_relative \
 		proto/user.proto proto/svc.proto
 
+tidy:
+	go mod tidy
