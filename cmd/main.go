@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -11,9 +12,11 @@ import (
 	"slient.util/service"
 )
 
-var (
-	certFile = ""
-	keyFile  = ""
+const (
+	port = ":9000"
+
+	certFile = "static/cert/server.crt"
+	keyFile  = "static/cert/server.key"
 )
 
 func main() {
@@ -30,16 +33,19 @@ func main() {
 	grpcS := grpc.NewServer(grpc.Creds(c))
 	pb.RegisterSltUtilServiceServer(grpcS, service.NewServer())
 
-	// TODO create http server by mux
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello: grpc http"))
+	})
 
-	if err = http.ListenAndServeTLS(":8000", certFile, keyFile, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	log.Println("server start ", port)
+
+	if err = http.ListenAndServeTLS(port, certFile, keyFile, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
 			grpcS.ServeHTTP(w, r)
 		} else {
-			// TODO
-			// mux.ServeHTTP(w, r)
+			mux.ServeHTTP(w, r)
 		}
-
 	})); err != nil {
 		panic(err)
 	}

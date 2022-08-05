@@ -1,10 +1,14 @@
+GO        	?= GO111MODULE=on go
+STATIC_PATH	= static/cert
+
+
 .PHONY: bin
 
 bin:
-	go build -o bin/app cmd/main.go
+	$(GO) build -o bin/app cmd/main.go
 
 run:
-	go run cmd/main.go
+	$(GO) run cmd/main.go
 
 pb:
 	rm -rf ./generate/*
@@ -13,4 +17,15 @@ pb:
 		proto/user.proto proto/svc.proto
 
 tidy:
-	go mod tidy
+	$(GO) mod tidy
+
+cert:
+	mkdir -p $STATIC_PATH
+	# openssl req -new -x509 -keyout static/cert/server.key -out static/cert/server.crt
+	openssl genrsa -out "${STATIC_PATH}/server.key" 2048
+	openssl req -new -key "${STATIC_PATH}/server.key" -out "${STATIC_PATH}/server.csr"
+	openssl x509 -req -days 365 -in "${STATIC_PATH}/server.csr" -signkey "${STATIC_PATH}/server.key" -out "${STATIC_PATH}/server.crt"
+
+downloadproto:
+	sudo chmod +x download_proto.sh
+	./download_proto.sh

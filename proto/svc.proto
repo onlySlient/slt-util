@@ -8,5 +8,7 @@ import "proto/user.proto";
 
 service SltUtilService {
     // hello
-    rpc Hello(api.HelloReq) returns (api.HelloResp) {};
+    rpc Hello(api.HelloReq) returns (api.HelloResp) {
+              
+    };
 };
